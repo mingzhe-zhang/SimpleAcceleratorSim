@@ -175,6 +175,7 @@ class buffer_component:
 	access_delay = 0
 	read_port_count = 0
 	write_port_count = 0
+	component_pool_ptr = None
 
 	# internal
 	used_capacity = 0
@@ -183,6 +184,7 @@ class buffer_component:
 	content = [] # format: [[data_block_id, size],...]
 	next_available_cycle_read = []
 	next_available_cycle_write = []
+	
 
 	# statistic
 	access_count = 0
@@ -206,5 +208,19 @@ class buffer_component:
 		self.read_port_count = read_port_count
 		self.write_port_count = write_port_count
 
-	#def access(self, data_block_id):
+	def set_upper_component(self, upper_component_id):
+		self.upper_component_id = upper_component_id
+
+	def set_component_pool(self, pool_ptr):
+		self.component_pool_ptr = pool_ptr
+
+	def _check_hit(self, data_block_id):
+		for idx in range(0, len(self.content)):
+			if self.content[idx][0] == data_block_id:
+				return idx
+		return -1
+
+	def access(self, data_block_id, cur_cycle, access_type):
+		assert(access_type == 0 or access_type == 1)
+		
 
